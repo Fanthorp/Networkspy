@@ -35,7 +35,6 @@ class RunDetect(object):
         t = (taskid,state,ctime)
         self.detectResult.append(t)
         
-
     def checkHost(self):
         threads = []
         for row in self.targetHost:
