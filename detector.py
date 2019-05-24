@@ -7,10 +7,10 @@ function: get Host state by ping check
 
 '''
 
+import datetime,logging,os
 from db.mydb import Mydb
 from icmp.icmp import Icmp
 from threading import Thread
-import datetime
 
 class RunDetect(object):
     def __init__(self,detectId,dbHost,dbUser,dbPass,dbName):
@@ -22,6 +22,10 @@ class RunDetect(object):
         self.targetHost = []
         self.detectResult = []
         self.db = Mydb(self.dbHost,self.dbUser,self.dbPass,self.dbName)
+        logging.basicConfig(level=logging.DEBUG,
+                format='%(asctime)s [%(levelname)s] %(message)s',
+                filename=os.path.dirname(os.path.realpath(__file__))+'/syslog.log',
+                filemode='a')
 
     def getTargetHost(self):
         sql = 'select HostList.IPAddr,PingTaskList.ID from PingTaskList inner join HostList  on HostList.Id=PingTaskList.TargetHost;'
@@ -52,7 +56,7 @@ class RunDetect(object):
             sql = 'update PingTaskList set CurrentState=' + str(row[1]) + ',LastDetectTime=' + "'" + row[2] + "'" +  ' where ID=' + str(row[0]) +';'
             #sql = 'update PingTaskList set CurrentState=5 where ID=3;'
             self.db.update(sql)
-            #print(sql)
+            logging.debug('sql语句:' + sql)
 
 
 
